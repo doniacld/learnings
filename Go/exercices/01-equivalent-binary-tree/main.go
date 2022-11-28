@@ -26,25 +26,38 @@ func walk(t *tree.Tree, ch chan int) {
 // Same determines whether the trees
 // t1 and t2 contain the same values.
 func Same(t1, t2 *tree.Tree) bool {
-	return false
+	ch1 := make(chan int)
+	ch2 := make(chan int)
+
+	go Walk(t1, ch1)
+	go Walk(t2, ch2)
+
+	for {
+		v1, ok1 := <-ch1
+		v2, ok2 := <-ch2
+
+		// no more values in the tree
+		if !ok1 && !ok2 {
+			return true
+		}
+
+		// not the same length
+		if ok1 != ok2 {
+			return false
+		}
+
+		// not the same value
+		if v1 != v2 {
+			return false
+		}
+	}
 }
 
 func main() {
 	t1 := tree.New(10)
-	fmt.Println("t1: ", t1)
-	ch := make(chan int)
-	go Walk(t1, ch)
+	t2 := tree.New(5)
 
-	for value := range ch {
-		fmt.Println(value)
-	}
-
-	// My first naive solution without the close channel
-	//for i := 0; i < 10; i++ {
-	//	value, ok := <-ch
-	//	if !ok {
-	//		break
-	//	}
-	//	fmt.Println(value)
-	//}
+	fmt.Println(Same(t1, t1)) // true
+	fmt.Println(Same(t1, t2)) // false
+	fmt.Println(Same(t2, t1)) // false
 }
