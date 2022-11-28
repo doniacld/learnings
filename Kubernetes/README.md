@@ -15,7 +15,7 @@ both declarative configuration and automation. It has a large, rapidly growing e
 **Virtualized deployment era**
 - run multiple VM on a single physical server's CPU
 - applications are isolated ==> more security
-- better utilisation of resoures ==> better scalability ==> reduce hardware costs
+- better utilisation of resources ==> better scalability ==> reduce hardware costs
 - each VM is a full machine running all the components: OS on top of hardware
 
 **Container deployment era**
@@ -35,7 +35,7 @@ both declarative configuration and automation. It has a large, rapidly growing e
 - resource isolation, predicablt application perf
 - resource utilisation, high efficiency
 
-## What Kubernetes does
+### What Kubernetes does
 
 It takes care of scaling and failover, provides deployment patterns. e.g.: Manage canary deployment
 
@@ -68,6 +68,83 @@ It takes care of scaling and failover, provides deployment patterns. e.g.: Manag
 
 
 ## Cluster Architecture
+
+### Nodes
+https://kubernetes.io/docs/concepts/architecture/nodes/
+
+- A node may be a virtual or physical machine, depending on the cluster. 
+- Each node is managed by the control plane and contains services necessary to run Pods.
+- Several nodes in a cluster
+
+A node is composed of the following components:
+- kubelet
+- container runtime
+- kube-proxy
+
+Two kind of nodes:
+- Master (Control plane): often abstracted 
+- Workers 
+
+#### Management
+
+Add Nodes to API Server:
+1. The kubelet on a node self-registers to the control plane
+2. You (or another human user) manually add a Node object
+
+A Node is healthy:
+- Kubernetes checks kubelet has registered to the API server with label `metadata.name` of the Node
+- ✅ All necessary services are running ==> run a Pod
+- ❌ Node is ignored for any cluster
+  - Kubernetes keeps the invalid node and checks if it becomes ✅
+  - Must explicitly delete the Node to stop health checking 🔫
+
+
+**Node name uniqueness**
+- The name identifies a Node. 
+- Two nodes cannot have the same name ❌ 👯‍
+- Remove the previous object to create a new one
+
+**Self-registration of Nodes**
+When the kubelet flag --register-node is true (the default), the kubelet will attempt to register itself with the API server. 
+This is the preferred pattern, used by most distros.
+
+### Manual Node administration
+- Use kubectl
+- set the kubelet flag --register-node=false.
+
+### Node status
+
+- Addresses
+- Conditions
+- Capacity and Allocatable
+- Info
+
+**Addresses**
+- Hostname
+- ExternalIP: IP address available outside the cluster
+- InternalIP: IP address routable only within the cluster
+
+**Conditions**
+- `conditions`: the status of all Running nodes
+- Examples: `Ready`, `DiskPressure`, `MemoryPressure`, `PIDPressure`, `NetworkUnavailable`
+
+**Capacity and Allocatable**
+- Describes the resources available on the node:
+  - CPU
+  - Memory
+  - Max number
+
+**Info**
+- general information about the node
+  - kernel version
+  - Kubernetes version (kubelet and kube-proxy version)
+  - container runtime details
+  - operating system the node uses
+ 
+The kubelet gathers this information from the node and publishes it into the Kubernetes API.
+
+
+
 
 ## Containers
 
