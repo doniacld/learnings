@@ -1,5 +1,10 @@
 # Databases
 
+Notes from:
+- https://igotanoffer.com/blogs/tech/databases-system-design-interview
+
+---
+
 > A database is a systematic collection of data. 
 > They support electronic storage and manipulation of data. Databases make data management easy.
 
@@ -43,37 +48,212 @@ Reality:
 - Theoretically impossible to implement together
 - Usually relational databases do support ACID transactions, and non-relational databases don’t
 
-## Types of Databases
-Here are some popular types of databases.
 
-### Distributed databases
-A distributed database is a type of database that has contributions from the common database and information captured by local computers. 
-In this type of database system, the data is not in one place and is distributed at various organizations.
+## Schemas
 
-### Relational databases:
-This type of database defines database relationships in the form of tables. 
-It is also called Relational DBMS, which is the most popular DBMS type in the market. Database example of the RDBMS system include MySQL, Oracle, and Microsoft SQL Server database.
+> A schema is to define the shape of a data structure, and specify what kinds of data can go where.
 
-### Object-oriented relational databases:
-This type of computers database supports the storage of all data types. The data is stored in the form of objects. 
-The objects to be held in the database have attributes and methods that define what to do with the data. PostgreSQL is an example of an object-oriented relational DBMS.
+- database level structures: tables and indexes
+- data level constraints: field types(string, boolean, ref...)
+- it can be one schema across the DB or different entreies with different schemas
 
-### Centralized database:
-It is a centralized location, and users from different backgrounds can access this data. 
-This type of computers databases store application procedures that help users access the data even from a remote location.
 
-### NoSQL databases:
-NoSQL database is used for large sets of distributed data. There are a few big data performance problems that are effectively handled by relational databases. This type of computers database is very efficient in analyzing large-size unstructured data.
-Graph databases:
-A graph-oriented database uses graph theory to store, map, and query relationships. These kinds of computers databases are mostly used for analyzing interconnections. For example, an organization can use a graph database to mine data about customers from social media.
+- Computationally expensive: 
+  - enforce a schema it is safe, any queries will return data conforms to the schema
+  - schema properties have to be confirmed on every operation of write, update and delete
+- Difficult to scale:
+  - many constraints more difficult as the reference span clusters and schema rules need to be verified across the network
 
-### OLTP(Online transaction processing) databases:
-OLTP another database type which able to perform fast query processing and maintaining data integrity in multi-access environments.
+## Scaling
 
-> OLTP and OLAP: The two terms look similar but refer to different kinds of systems. Online transaction processing (OLTP) captures, stores, and processes data from transactions in real time.
-> Online analytical processing (OLAP) uses complex queries to analyze aggregated historical data from OLTP systems.
+Scaling is necessary to implement databases in distributed clusters as dataset sizes grows more and more.
 
-### Document/JSON database:
-In a document-oriented database, the data is kept in document collections, usually using the XML, JSON, BSON formats.
-One record can store as much data as you want, in any data type (or types) you prefer.
+- Vertical scaling: adding CPU and memory resources to a single computer
+  - ➕ fairly straight forward
+  - ➖ much lower overall capacity
+- Horizontal scaling: adding more computer to a cluster
+  - ➕ can be sized dynamically without downtime
+  - ➖ relational databases struggle to scale horizontally
 
+---
+## Relational Databases
+
+> A database with logical organisation and rules of the data, it uses a relational data model.
+
+It is composed of:
+- tables with rows
+- columns of predetermined data types
+- foreign key columns to represent relationship
+- primary key column 
+- indexes
+
+Behaviour:
+- Enforce constraints to ensure data values and relationships are always valid
+- ACID transactions almost always implemented to ensure schema conformance
+
+SQL:
+- Relation database = SQL (Structured Query Language) standard query language for relational models
+- SQL is declarative = tell what you want to the database and database is the query planner
+- Tuning the query planner is one of the primary optimisations techniques
+
+Index:
+- Add index when a column is frequently accesses
+- Speed up the search
+- Index = a table that has a copy of the column of interest and a foreign key reference to the original table
+
+- Special ordering data structures on indices
+- Access faster than scanning row by row
+- ➕ Perf is boost on reads
+- ➖ Slower writes: each index needs to get updated in addition to the primary table
+
+**Relational databases are almost always CP because guaranteeing consistency is important.**
+Making sure no matter what transactions occur, database is **always in a valid state**.
+
+When to use:
+- there are many-to-many relationships between entries
+- data needs to follow the predetermined schema
+- relationships between data always need to be accurate
+
+- The top industry technologies for relational databases are:
+- Oracle
+- MySQL
+- PostgresQL
+
+Disadvantages:
+- hard to scale over distributed clusters
+- split up the data there will be relationships between data entries on different nodes
+- cross-node relationships get updated, nodes have to communicate with each other to normalize (keep sync) the data
+- db operations are slower because of the network communication
+==> tradeoff data replication and partition
+- distributed systems are moving away from relational models:
+  - difficult to maintain relations over the cluster
+  - need more flexibility around schema
+
+NB:
+Some database are multi model and supports bth relational and non relational models.
+
+---
+## Non-relational Databases
+
+> Non-relational databases are optimised for use cases that need scalability, schema flexibility or specilised query support.
+
+No SQL:
+- use other query languages
+- most often implement SQL or SQL like query 
+- the underlying execution the queries is different from relational database
+
+- AP or CP depending on the target
+- AP: eventual consistency still happens over time, not guarantee exactly after a transaction is complete
+
+### Graph database
+
+> Graph databases model data with nodes and edges.
+
+- Most similar to a relational data model because good at representing data with lots of relationships
+- ➕ Queries dont's need joings to follow relationship edges because no tables
+- ➕ Good for queries that traverse many edges e.g.: social network analytics
+
+In the industry:
+- Cassandra
+- Neo4J
+- CosmosDB
+
+### Document store
+
+> Document stores are usually simple JSON objects stored with a key identifier.
+
+- Set of information pertaining to a single topic
+- Usecase example: archive medical records
+- Easy to update a single document without updating the entire database
+- Example: Add a location field to articles but not updated the previous one
+
+In the industry:
+- MongoDB
+- Couchbase
+- DynamoDB
+
+## Key value store
+
+> A Key-Value store is similar to a document store, but the data stored in the value is opaque.
+
+- Simple read, overwrite and delete operations
+- no schemas, no joins or indices
+- Like "large hash table"
+- Very easy to scale
+- Suitable for caching
+- When the values need to be large, this kind of database is referred to as an Object Store, or Blob Store. 
+- In this case, the data might be serialized and optimized for large file sizes. Use cases include videos, images, audio, disk images, and log binaries. 
+
+In the industry: 
+- Redis
+- DynamoDB
+- CosmosDB
+- Memcached
+- Hazelcast
+
+## Column-family Databases
+
+## Search Engine Database
+
+- Elasticsearch
+- Splunk
+- Solr
+
+## Time Series Database
+
+- Prometheus
+- InfluxDB
+- Kdb+
+
+## Summary
+
+Before choosing a database, it is important to consider:
+- data size
+- structure
+- relationships
+- how important it is to enforce schemas and ensure consistency
+
+
+### Relational database
+
+- many-to-many relationships
+- data and data relationships need to strictly follow schema
+- consistent transactions are important
+- hard to scale because relationships are hard to partition effectively
+
+### Graph database
+
+- many-to-many relationships (graph structure)
+- fast at following graph edges
+- suited to complex network analytics
+- less mature technology than Relational
+
+#### Document store
+
+- isolated documents
+- retrieve by a key
+- documents with different schemas that are easy to update
+- easy to scale
+
+### Key-value store / object store
+
+- opaque values
+- no schema or relationships known to the database
+- very simple operations
+- easy to scale
+
+### Column-family database
+
+- groups related columns for storage (easy to scale)
+- memory effective for sparse data
+
+### Search engine database
+
+- large amounts of unstructured data
+- full text search or fuzzy search service
+
+### Time series database
+
+- data is ordered by time
+- many data streams
+- real time entry ordering functionality
