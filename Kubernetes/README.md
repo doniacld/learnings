@@ -167,5 +167,5 @@ The kubelet gathers this information from the node and publishes it into the Kub
 📚 **Readings** 
 - https://kubernetes.io/docs/concepts/
 
-📺 ** Videos**
+📺 **Videos**
 - https://www.youtube.com/watch?v=a1Uwoq1Yv6U&list=PLmw3X80dPdlzksg6X9s23LEkLMWFGGUn5
