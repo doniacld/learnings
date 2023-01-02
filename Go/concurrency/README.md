@@ -15,9 +15,19 @@ go f(x, y, z)
 About goroutines:
 - the evaluation of the parameters happens in the curren goroutine
 - execution of the function happens in the new goroutine
-- gorourtines run in the same address space
+- goroutines run in the same address space
 - access to shared memory must be sync
 - `sync` package provides useful primitives (`sync.WaitGroup`)
+
+
+### What is the difference between a concurrency and parallelism?
+
+Parallelism means several processes executed at the same time on multiple threads or processors.
+These processors are able to communicate via shared memory ==> result can be combined at the end.
+
+Concurrency may or **may not** run in parallel. 
+It means running several processes simultaneously but not executed at the same time.
+Concurrency does not require multiple threads or processors. Goruntime takes care dynamically multiplexing the goroutines onto the needed threads.
 
 ## Channels
 
@@ -238,3 +248,18 @@ type Ticker struct {
 	r runtimeTimer
 }
 ```
+
+## sync.Mutex
+
+Channels are great for communication,if no need for communication we can use mutual exclusion (mutex) 
+to make sure only one goroutine can access a variable.
+
+```go
+var m sync.Mutex
+m.Lock()            // lock the variable
+m.Unlock            // unlock the variable
+defer m.Unlock()    // last action  in a function
+```
+
+
+
