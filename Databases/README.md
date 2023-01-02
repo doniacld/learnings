@@ -55,7 +55,7 @@ Reality:
 
 - database level structures: tables and indexes
 - data level constraints: field types(string, boolean, ref...)
-- it can be one schema across the DB or different entreies with different schemas
+- it can be one schema across the DB or different entities with different schemas
 
 
 - Computationally expensive: 
@@ -63,6 +63,8 @@ Reality:
   - schema properties have to be confirmed on every operation of write, update and delete
 - Difficult to scale:
   - many constraints more difficult as the reference span clusters and schema rules need to be verified across the network
+
+Star and snowflake TODO
 
 ## Scaling
 
@@ -84,7 +86,7 @@ It is composed of:
 - tables with rows
 - columns of predetermined data types
 - foreign key columns to represent relationship
-- primary key column 
+- primary key column: not null and unique only one primary key
 - indexes
 
 Behaviour:
@@ -213,7 +215,6 @@ Before choosing a database, it is important to consider:
 - relationships
 - how important it is to enforce schemas and ensure consistency
 
-
 ### Relational database
 
 - many-to-many relationships
@@ -257,3 +258,58 @@ Before choosing a database, it is important to consider:
 - data is ordered by time
 - many data streams
 - real time entry ordering functionality
+
+---
+### SQL or No SQL reasons
+
+Reasons for SQL:
+
+- Structured data
+- Strict schema
+- Relational data
+- Need for complex joins
+- Transactions
+- Clear patterns for scaling
+- More established: developers, community, code, tools, etc
+- Lookups by index are very fast
+
+Reasons for NoSQL:
+
+- Semi-structured data
+- Dynamic or flexible schema
+- Non-relational data
+- No need for complex joins
+- Store many TB (or PB) of data
+- Very data intensive workload
+- Very high throughput for IOPS 
+
+Sample data well-suited for NoSQL:
+- Rapid ingest of clickstream and log data
+- Leaderboard or scoring data
+- Temporary data, such as a shopping cart
+- Frequently accessed ('hot') tables
+- Metadata/lookup tables
+
+## Normalization and Denormalization
+
+Normalization is the technique of dividing the data into multiple tables to reduce data redundancy and inconsistency and to achieve data integrity. 
+On the other hand, Denormalization is the technique of combining the data into a single table to make data retrieval faster.
+
+1. Normalization is used in OLTP system, which emphasizes on making the insert, delete and update anomalies faster. 
+As against, Denormalization is used in OLAP system, which emphasizes on making the search and analysis faster.
+2. Data integrity is maintained in normalization process while in denormalization data integrity harder to retain.
+3. Redundant data is eliminated when normalization is performed whereas denormalization increases the redundant data.
+4. Normalization increases the number of tables and joins. In contrast, denormalization reduces the number of tables and join.
+5. Disk space is wasted in denormalization because same data is stored in different places. On the contrary, disk space is optimized in a normalized table.
+
+# Sharding
+
+> Sharding is essentially the horizontal scaling of a database system that is accomplished by breaking the database up into smaller “shards”,
+> which are separate database servers that all contain a subset of the overall dataset.
+
+![img.png](02-sharding.png)
+
+# Resources
+
+📚 Readings
+- https://stackoverflow.com/questions/11292215/where-does-mongodb-stand-in-the-cap-theorem#11297667
