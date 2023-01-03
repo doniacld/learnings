@@ -2,10 +2,10 @@
 
 ### Labs
 
-- [X] [Getting Started with Cilium](getting_started_cilium.md) ⭐️
+- [x] [Getting Started with Cilium](getting_started_cilium.md) ⭐️
 - [ ] Cilium Service Mesh ⭐️⭐️
 - [ ] Security Observability with eBPF and Cilium Tetragon ⭐️⭐️⭐️
-- [ ] Getting started with eBPF ⭐️
+- [x] [Getting started with eBPF](getting_started_ebpf.md) ⭐️
 - [ ] Cilium Host Firewall ⭐️⭐️
 - [ ] Cilium Gateway API ⭐️⭐️
 - [ ] Cilium Egress Gateway ⭐️

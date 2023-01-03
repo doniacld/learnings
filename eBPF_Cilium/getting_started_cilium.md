@@ -286,7 +286,6 @@ kubectl get cep --all-namespaces
 - L7 Network Policies can filter on HTTP paths
 - Cilium supports standard Kubernetes Network Policies
 
-
 ```yaml
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
